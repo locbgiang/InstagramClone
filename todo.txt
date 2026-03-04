@@ -1,0 +1,56 @@
+1. Choose a Tech Stack
+    You'll need to decide on:
+
+    Frontend: React, React Native (mobile), Next.js, Vue, etc.
+    Backend: Node.js/Express, Django, Go, etc.
+    Database: PostgreSQL, MongoDB, etc.
+    File Storage: S3, Cloudinary, or local storage for images
+    Auth: JWT, OAuth, session-based
+
+2. Project Setup
+    Initialize frontend and backend projects
+    Set up linting, formatting, .gitignore
+    Configure database connection
+    Set up file/image storage
+
+3. Authentication
+    User registration (email, username, password)
+    Login / logout
+    Password hashing and JWT token management
+    Protected routes
+
+4. User Profiles
+    Profile page (avatar, bio, post count, follower/following counts)
+    Edit profile (update avatar, bio, name)
+    Follow / unfollow other users
+
+5. Posts (Core Feature)
+    Image upload with captions
+    Image processing/resizing
+    Feed display (posts from followed users)
+    Single post view
+    Delete posts
+
+6. Interactions
+    Like / unlike posts
+    Comments on posts
+    Feed algorithm (chronological or ranked)
+
+7. Explore & Search
+    Search users by username
+    Explore page (discover posts from non-followed users)
+
+8. Real-Time Features (Optional)
+    Direct messaging
+    Notifications (likes, comments, follows)
+    WebSockets or SSE for live updates
+
+9. Stories (Optional)
+    Ephemeral image/video posts (24hr expiry)
+    Story viewer list
+    
+10. Polish & Deploy
+    Responsive design / mobile support
+    Rate limiting, input validation, security hardening
+    CI/CD pipeline
+    Deploy (Vercel, Railway, AWS, etc.)
