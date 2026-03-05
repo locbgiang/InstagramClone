@@ -32,7 +32,12 @@ export const Header = () => {
             <Link to="/feed" style={{ textDecoration: "none", color: "#000" }}>
               Feed
             </Link>
-            <span>@{user?.username}</span>
+            <Link
+              to={`/${user?.username}`}
+              style={{ textDecoration: "none", color: "#000" }}
+            >
+              @{user?.username}
+            </Link>
             <button
               onClick={handleLogout}
               style={{
