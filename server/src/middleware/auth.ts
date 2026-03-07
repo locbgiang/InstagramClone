@@ -30,3 +30,19 @@ export const authMiddleware = (
   req.userId = payload.userId;
   next();
 };
+
+// Sets req.userId if a valid token is present, but does not reject the request otherwise
+export const optionalAuthMiddleware = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  const token = req.cookies?.accessToken;
+  if (token) {
+    const payload = verifyAccessToken(token);
+    if (payload) {
+      req.userId = payload.userId;
+    }
+  }
+  next();
+};

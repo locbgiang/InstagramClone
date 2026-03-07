@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useEffect, useState } from "react";
+import { apiUrl } from "../lib/api";
 
 export interface User {
   id: number;
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/me", { credentials: "include" });
+        const response = await fetch(apiUrl("/api/auth/me"), { credentials: "include" });
         if (response.ok) {
           const data = await response.json();
           setUser(data.user);
@@ -57,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string,
     name?: string
   ) => {
-    const response = await fetch("/api/auth/register", {
+    const response = await fetch(apiUrl("/api/auth/register"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await fetch("/api/auth/login", {
+    const response = await fetch(apiUrl("/api/auth/login"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -91,7 +92,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await fetch("/api/auth/logout", {
+    await fetch(apiUrl("/api/auth/logout"), {
       method: "POST",
       credentials: "include",
     });
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateUser = async (data: { name?: string; bio?: string; avatar?: string }) => {
-    const response = await fetch("/api/profile", {
+    const response = await fetch(apiUrl("/api/profile"), {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { apiUrl, uploadsUrl } from "../lib/api";
+import { colors, buttonSecondaryStyle } from "../styles";
+import { Avatar } from "./ui/Avatar";
+import { LoadingSpinner } from "./ui/LoadingSpinner";
 
 interface ProfileUser {
   id: number;
@@ -11,24 +15,42 @@ interface ProfileUser {
   createdAt: string;
 }
 
+interface Post {
+  id: number;
+  image: string;
+  caption: string | null;
+  createdAt: string;
+}
+
 export const Profile = () => {
   const { username } = useParams<{ username: string }>();
   const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState<ProfileUser | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   const isOwnProfile = currentUser?.username === username;
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/profile/${username}`);
-        if (!response.ok) {
+        const [profileRes, postsRes] = await Promise.all([
+          fetch(apiUrl(`/api/profile/${username}`)),
+          fetch(apiUrl(`/api/posts/user/${username}`)),
+        ]);
+
+        if (!profileRes.ok) {
           throw new Error("User not found");
         }
-        const data = await response.json();
-        setProfile(data.user);
+
+        const profileData = await profileRes.json();
+        setProfile(profileData.user);
+
+        if (postsRes.ok) {
+          const postsData = await postsRes.json();
+          setPosts(postsData.posts);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load profile");
       } finally {
@@ -36,16 +58,16 @@ export const Profile = () => {
       }
     };
 
-    fetchProfile();
+    fetchData();
   }, [username]);
 
   if (isLoading) {
-    return <div style={{ textAlign: "center", padding: "2rem" }}>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error || !profile) {
     return (
-      <div style={{ textAlign: "center", padding: "2rem", color: "red" }}>
+      <div style={{ textAlign: "center", padding: "2rem", color: colors.error }}>
         {error || "User not found"}
       </div>
     );
@@ -62,32 +84,7 @@ export const Profile = () => {
           marginBottom: "2rem",
         }}
       >
-        {/* Avatar */}
-        <div
-          style={{
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
-            backgroundColor: "#ddd",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "2.5rem",
-            color: "#888",
-            overflow: "hidden",
-            flexShrink: 0,
-          }}
-        >
-          {profile.avatar ? (
-            <img
-              src={profile.avatar}
-              alt={profile.username}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            profile.username[0].toUpperCase()
-          )}
-        </div>
+        <Avatar src={profile.avatar} username={profile.username} size={120} />
 
         {/* Info */}
         <div style={{ flex: 1 }}>
@@ -105,15 +102,12 @@ export const Profile = () => {
             {isOwnProfile && (
               <Link
                 to="/edit-profile"
+                className="btn-secondary"
                 style={{
-                  padding: "0.4rem 1rem",
-                  backgroundColor: "#f0f0f0",
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  color: "#000",
+                  ...buttonSecondaryStyle,
+                  border: `1px solid ${colors.border}`,
                   fontSize: "0.875rem",
-                  fontWeight: 600,
+                  textDecoration: "none",
                 }}
               >
                 Edit Profile
@@ -121,7 +115,7 @@ export const Profile = () => {
             )}
           </div>
 
-          {/* Stats row - placeholder for future post/follower counts */}
+          {/* Stats row */}
           <div
             style={{
               display: "flex",
@@ -131,7 +125,7 @@ export const Profile = () => {
             }}
           >
             <span>
-              <strong>0</strong> posts
+              <strong>{posts.length}</strong> {posts.length === 1 ? "post" : "posts"}
             </span>
             <span>
               <strong>0</strong> followers
@@ -151,17 +145,47 @@ export const Profile = () => {
         </div>
       </div>
 
-      {/* Posts Grid - placeholder */}
-      <div style={{ borderTop: "1px solid #ddd", paddingTop: "1.5rem" }}>
-        <p
-          style={{
-            textAlign: "center",
-            color: "#888",
-            fontSize: "0.9rem",
-          }}
-        >
-          No posts yet.
-        </p>
+      {/* Posts Grid */}
+      <div style={{ borderTop: `1px solid ${colors.border}`, paddingTop: "1.5rem" }}>
+        {posts.length === 0 ? (
+          <p
+            style={{
+              textAlign: "center",
+              color: colors.textSecondary,
+              fontSize: "0.9rem",
+            }}
+          >
+            No posts yet.
+          </p>
+        ) : (
+          <div
+            className="post-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "4px",
+            }}
+          >
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                to={`/post/${post.id}`}
+                style={{ display: "block", aspectRatio: "1", overflow: "hidden" }}
+              >
+                <img
+                  src={uploadsUrl(post.image)}
+                  alt={post.caption || "Post"}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,14 @@
 import { FormEvent, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import {
+  colors,
+  inputStyle,
+  buttonPrimaryStyle,
+  labelStyle,
+  formGroupStyle,
+  errorTextStyle,
+} from "../styles";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,41 +34,61 @@ export const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "4rem auto", padding: "2rem" }}>
-      <h1>Login</h1>
-      {error && <div style={{ color: "red", marginBottom: "1rem" }}>{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Email: </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", boxSizing: "border-box" }}
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Password: </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", boxSizing: "border-box" }}
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={isLoading}
-          style={{ width: "100%", padding: "0.75rem" }}
-        >
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-      <p style={{ marginTop: "1rem" }}>
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
+    <div style={{ maxWidth: "400px", margin: "4rem auto", padding: "0 1rem" }}>
+      <div
+        style={{
+          backgroundColor: colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: "8px",
+          padding: "2rem",
+        }}
+      >
+        <h1 style={{ textAlign: "center", marginTop: 0 }}>Login</h1>
+        {error && <div style={errorTextStyle}>{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div style={formGroupStyle}>
+            <label style={labelStyle}>Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={inputStyle}
+              placeholder="you@example.com"
+            />
+          </div>
+          <div style={formGroupStyle}>
+            <label style={labelStyle}>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={inputStyle}
+              placeholder="Password"
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn-primary"
+            disabled={isLoading}
+            style={{
+              ...buttonPrimaryStyle,
+              width: "100%",
+              padding: "0.75rem",
+              opacity: isLoading ? 0.6 : 1,
+            }}
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+        <p style={{ marginTop: "1rem", textAlign: "center", color: colors.textSecondary }}>
+          Don't have an account?{" "}
+          <Link to="/register" style={{ color: colors.primary, fontWeight: 600 }}>
+            Register
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,17 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import {
+  colors,
+  inputStyle,
+  textareaStyle,
+  buttonPrimaryStyle,
+  buttonSecondaryStyle,
+  labelStyle,
+  formGroupStyle,
+  errorTextStyle,
+} from "../styles";
+import { Avatar } from "./ui/Avatar";
 
 export const EditProfile = () => {
   const { user, updateUser } = useAuth();
@@ -32,9 +43,7 @@ export const EditProfile = () => {
       <h2 style={{ marginBottom: "1.5rem" }}>Edit Profile</h2>
 
       <form onSubmit={handleSubmit}>
-        {error && (
-          <p style={{ color: "red", marginBottom: "1rem" }}>{error}</p>
-        )}
+        {error && <p style={errorTextStyle}>{error}</p>}
 
         {/* Avatar preview */}
         <div
@@ -45,115 +54,45 @@ export const EditProfile = () => {
             marginBottom: "1.5rem",
           }}
         >
-          <div
-            style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "50%",
-              backgroundColor: "#ddd",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "1.5rem",
-              color: "#888",
-              overflow: "hidden",
-              flexShrink: 0,
-            }}
-          >
-            {avatar ? (
-              <img
-                src={avatar}
-                alt="avatar"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            ) : (
-              user?.username[0].toUpperCase()
-            )}
-          </div>
+          <Avatar src={avatar || user?.avatar} username={user?.username || ""} size={60} />
           <div>
             <p style={{ margin: 0, fontWeight: 600 }}>{user?.username}</p>
           </div>
         </div>
 
         {/* Avatar URL */}
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "0.25rem",
-              fontWeight: 600,
-              fontSize: "0.875rem",
-            }}
-          >
-            Avatar URL
-          </label>
+        <div style={formGroupStyle}>
+          <label style={labelStyle}>Avatar URL</label>
           <input
             type="url"
             value={avatar}
             onChange={(e) => setAvatar(e.target.value)}
             placeholder="https://example.com/photo.jpg"
-            style={{
-              width: "100%",
-              padding: "0.5rem",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              boxSizing: "border-box",
-            }}
+            style={inputStyle}
           />
         </div>
 
         {/* Name */}
-        <div style={{ marginBottom: "1rem" }}>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "0.25rem",
-              fontWeight: 600,
-              fontSize: "0.875rem",
-            }}
-          >
-            Name
-          </label>
+        <div style={formGroupStyle}>
+          <label style={labelStyle}>Name</label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Your name"
-            style={{
-              width: "100%",
-              padding: "0.5rem",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              boxSizing: "border-box",
-            }}
+            style={inputStyle}
           />
         </div>
 
         {/* Bio */}
-        <div style={{ marginBottom: "1.5rem" }}>
-          <label
-            style={{
-              display: "block",
-              marginBottom: "0.25rem",
-              fontWeight: 600,
-              fontSize: "0.875rem",
-            }}
-          >
-            Bio
-          </label>
+        <div style={{ ...formGroupStyle, marginBottom: "1.5rem" }}>
+          <label style={labelStyle}>Bio</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             placeholder="Tell us about yourself"
             rows={4}
-            style={{
-              width: "100%",
-              padding: "0.5rem",
-              border: "1px solid #ddd",
-              borderRadius: "4px",
-              resize: "vertical",
-              boxSizing: "border-box",
-            }}
+            style={textareaStyle}
           />
         </div>
 
@@ -161,31 +100,23 @@ export const EditProfile = () => {
         <div style={{ display: "flex", gap: "1rem" }}>
           <button
             type="submit"
+            className="btn-primary"
             disabled={isSaving}
             style={{
-              padding: "0.6rem 1.5rem",
-              backgroundColor: "#0095f6",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: isSaving ? "not-allowed" : "pointer",
-              fontWeight: 600,
+              ...buttonPrimaryStyle,
               opacity: isSaving ? 0.6 : 1,
+              cursor: isSaving ? "not-allowed" : "pointer",
             }}
           >
             {isSaving ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
+            className="btn-secondary"
             onClick={() => navigate(`/${user?.username}`)}
             style={{
-              padding: "0.6rem 1.5rem",
-              backgroundColor: "#f0f0f0",
-              color: "#000",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
+              ...buttonSecondaryStyle,
+              border: `1px solid ${colors.border}`,
             }}
           >
             Cancel
